@@ -1,0 +1,49 @@
+
+import time
+import paho.mqtt.client as mqtt
+import pyotp
+
+# MQTT broker details
+mqtt_server = "broker.emqx.io" 
+mqtt_port = 1883
+mqtt_user = "ABCD123"  # Replace with your MQTT username
+mqtt_password = "ABCD123*"  # Replace with your MQTT password
+mqtt_topic = "your/topic"
+
+# Base32 secret key (same as the one used in ESP8266)
+secret = 'JBDCH246SOY'  #Your scret key in base 32
+  
+# Initialize TOTP
+totp = pyotp.TOTP(secret)
+
+# Callback when the client receives a connection acknowledgment from the server
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code " + str(rc))
+    client.subscribe(mqtt_topic)
+
+# Callback when a PUBLISH message is received from the server
+def on_message(client, userdata, msg):
+    received_otp = msg.payload.decode()
+    print(f"Received OTP: {received_otp}")
+    
+    # Generate the current OTP
+    current_otp = totp.now()
+    print(f"Generated OTP: {current_otp}")
+    
+    # Verify the OTPs
+    if received_otp == current_otp:
+        print("OTPs match!")
+    else:
+        print("OTPs do not match!")
+
+# Setup MQTT client
+client = mqtt.Client()
+client.username_pw_set(mqtt_user, mqtt_password)
+client.on_connect = on_connect
+client.on_message = on_message
+
+# Connect to the MQTT broker
+client.connect(mqtt_server, mqtt_port, 60)
+
+# Blocking call that processes network traffic, dispatches callbacks, and handles reconnecting
+client.loop_forever()
