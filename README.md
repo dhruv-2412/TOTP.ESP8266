@@ -52,7 +52,7 @@ The main components of this project are:
    - Install necessary libraries for TOTP generation and MQTT communication(for totp library use luca dentella and for mqtt library use PubSubClient).
 
 4. **Code**:
-   - They are provided in the src.
+   - They are provided above in txt format.
   
 ### MQTT connection
 
@@ -73,7 +73,7 @@ The main components of this project are:
      ```
 
 2. **Code**:
-   Uploaded in the src.
+   Uploaded above in txt format.
 
 ## Usage
 
